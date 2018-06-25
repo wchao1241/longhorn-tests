@@ -1,7 +1,7 @@
 #!/bin/bash
 
 version=$(./scripts/version)
-image="rancher/longhorn-manager-test:${version}"
+image="wchao241/rdns-server-test:${version}"
 docker build -t ${image} .
 mkdir -p bin
 echo ${image} > bin/latest_image
