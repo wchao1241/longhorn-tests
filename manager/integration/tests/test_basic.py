@@ -94,6 +94,29 @@ def create_domain_test(url, data):
     return response
 
 
+def test_get_domain():  # NOQA
+    token, fqdn = getTokenAndFqdn()
+    url = buildURL(BASE_URL, "/" + fqdn, "")
+    print "Url is \n"
+    print url
+    response = get_domain_test(url, token)
+    result = response.json()
+    assert result == response.json()
+    print "result \n"
+    print result
+    assert 0
+
+
+# This method gets the domain
+def get_domain_test(url, token):
+    headers = {"Content-Type": "application/json",
+               "Accept": "application/json",
+               "Authorization": 'Bearer %s' % token}
+
+    response = requests.get(url, params=None, headers=headers)
+    return response
+
+
 # buildUrl return request url
 def buildURL(base, fqdn, path):
     return '%s/domain%s%s' % (base, fqdn, path)
