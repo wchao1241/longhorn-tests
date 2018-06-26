@@ -92,7 +92,7 @@ def test_create_domain():  # NOQA
     # TOKEN = result['token']
     # FQDN = result['fqdn']
     assert TOKEN == result['token']
-    assert FQDN == result['fqdn']
+    assert FQDN == result['data']['fqdn']
     # print "TOKEN is \n"
     # print(TOKEN)
     # print "FQDN is \n"
