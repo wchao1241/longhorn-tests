@@ -11,13 +11,23 @@
 # from kubernetes import client as k8sclient, config as k8sconfig
 #
 BASE_URL = "http://172.31.8.164:9333/v1"
-TOKEN = ""
-FQDN = ""
+token = ""
+fqdn = ""
 
 param = {
     'fqdn': '',
     'hosts': ["1.1.1.1", "2.2.2.2"]
 }
+
+
+def setTokenAndFqdn(result):
+    global token, fqdn
+    token = result['token']
+    fqdn = result['data']['fqdn']
+
+
+def getTokenAndFqdn():
+    return token, fqdn
 
 # SIZE = str(16 * 1024 * 1024)
 # VOLUME_NAME = "longhorn-testvol"

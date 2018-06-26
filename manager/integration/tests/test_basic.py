@@ -16,7 +16,7 @@
 import json
 import requests
 
-from common import BASE_URL, param
+from common import BASE_URL, param, setTokenAndFqdn, getTokenAndFqdn
 
 
 # def test_hosts_and_settings(clients):  # NOQA
@@ -80,24 +80,9 @@ def test_create_domain():  # NOQA
     print "Url is \n"
     print url
     response = create_domain_test(url, param)
-
-    # print "response type is \n"
-    # print(type(response.text))
-    # print "response json is \n"
-    # print(response.json())
-    # print "response json type is \n"
-    # print(type(response.json()))
     result = response.json()
-    # TOKEN
-    # TOKEN = result['token']
-    # FQDN = result['fqdn']
-    # assert TOKEN == result['token']
-    # assert FQDN == result['data']['fqdn']
-    print "s is \n"
-    print(result)
-    print "data is \n"
-    print(result['data'])
-    assert 0
+    assert result == response.json()
+    setTokenAndFqdn(result)
 
 
 # This method creates the domain
