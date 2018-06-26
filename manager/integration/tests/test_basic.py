@@ -75,32 +75,6 @@ def update_domain_test(url, token, data):
     return response
 
 
-def test_delete_domain():  # NOQA
-    token, fqdn = get_token_fqdn()
-    print "delete token is \n"
-    print token
-    print "delete fqdn is \n"
-    print fqdn
-    url = build_url(BASE_URL, "/" + fqdn, "")
-    print "delete Url is \n"
-    print url
-    response = delete_domain_test(url, token)
-    result = response.json()
-    assert result == response.json()
-    print "delete result \n"
-    print result
-
-
-# This method deletes the domain
-def delete_domain_test(url, token):
-    headers = {"Content-Type": "application/json",
-               "Accept": "application/json",
-               "Authorization": 'Bearer %s' % token}
-
-    response = requests.delete(url, headers=headers)
-    return response
-
-
 def test_renew_domain():  # NOQA
     token, fqdn = get_token_fqdn()
     print "renew token is \n"
@@ -125,6 +99,32 @@ def renew_domain_test(url, token):
                "Authorization": 'Bearer %s' % token}
 
     response = requests.put(url, data=None, headers=headers)
+    return response
+
+
+def test_delete_domain():  # NOQA
+    token, fqdn = get_token_fqdn()
+    print "delete token is \n"
+    print token
+    print "delete fqdn is \n"
+    print fqdn
+    url = build_url(BASE_URL, "/" + fqdn, "")
+    print "delete Url is \n"
+    print url
+    response = delete_domain_test(url, token)
+    result = response.json()
+    assert result == response.json()
+    print "delete result \n"
+    print result
+
+
+# This method deletes the domain
+def delete_domain_test(url, token):
+    headers = {"Content-Type": "application/json",
+               "Accept": "application/json",
+               "Authorization": 'Bearer %s' % token}
+
+    response = requests.delete(url, headers=headers)
     return response
 
 
