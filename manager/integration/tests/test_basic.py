@@ -88,14 +88,15 @@ def test_create_domain():  # NOQA
     # print "response json type is \n"
     # print(type(response.json()))
     result = json.loads(response.json())
-    TOKEN = result['token']
-    FQDN = result['fqdn']
+    # TOKEN
+    # TOKEN = result['token']
+    # FQDN = result['fqdn']
     assert TOKEN == result['token']
     assert FQDN == result['fqdn']
-    print "TOKEN is \n"
-    print(TOKEN)
-    print "FQDN is \n"
-    print(FQDN)
+    # print "TOKEN is \n"
+    # print(TOKEN)
+    # print "FQDN is \n"
+    # print(FQDN)
     assert 0
 
 
