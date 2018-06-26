@@ -19,14 +19,19 @@ param = {
     'hosts': ["1.1.1.1", "2.2.2.2"]
 }
 
+update_param = {
+    'fqdn': '',
+    'hosts': ["3.3.3.3"]
+}
 
-def setTokenAndFqdn(result):
+
+def set_token_fqdn(result):
     global token, fqdn
     token = result['token']
     fqdn = result['data']['fqdn']
 
 
-def getTokenAndFqdn():
+def get_token_fqdn():
     return token, fqdn
 
 # SIZE = str(16 * 1024 * 1024)

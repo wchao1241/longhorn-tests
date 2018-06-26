@@ -1,88 +1,17 @@
-# import pytest
-# import time
-# import common
-#
-# from common import clients, volume_name  # NOQA
-# from common import SIZE, DEV_PATH, VOLUME_RWTEST_SIZE
-# from common import get_self_host_id
-# from common import volume_read, volume_write
-# from common import volume_valid
-# from common import iscsi_login, iscsi_logout
-# from common import wait_for_volume_state, wait_for_volume_delete
-# from common import wait_for_snapshot_purge
-# from common import generate_volume_name
-# from common import generate_random_data
-# from common import generate_random_pos
 import json
 import requests
 
-from common import BASE_URL, param, setTokenAndFqdn, getTokenAndFqdn
-
-
-# def test_hosts_and_settings(clients):  # NOQA
-#     hosts = clients.itervalues().next().list_host()
-#     for host in hosts:
-#         assert host["uuid"] is not None
-#         assert host["address"] is not None
-#
-#     host_id = []
-#     for i in range(0, len(hosts)):
-#         host_id.append(hosts[i]["uuid"])
-#
-#     host0_from_i = {}
-#     for i in range(0, len(hosts)):
-#         if len(host0_from_i) == 0:
-#             host0_from_i = clients[host_id[0]].by_id_host(host_id[0])
-#         else:
-#             assert host0_from_i["uuid"] == \
-#                    clients[host_id[i]].by_id_host(host_id[0])["uuid"]
-#             assert host0_from_i["address"] == \
-#                    clients[host_id[i]].by_id_host(host_id[0])["address"]
-#
-#     client = clients[host_id[0]]
-#
-#     setting_names = ["backupTarget", "backupTargetCredentialSecret"]
-#     settings = client.list_setting()
-#     # Skip DefaultEngineImage option
-#     # since they have side affect
-#     assert len(settings) == len(setting_names) + 1
-#
-#     settingMap = {}
-#     for setting in settings:
-#         settingMap[setting["name"]] = setting
-#
-#     for name in setting_names:
-#         assert settingMap[name] is not None
-#
-#     for name in setting_names:
-#         setting = client.by_id_setting(name)
-#         assert settingMap[name]["value"] == setting["value"]
-#
-#         old_value = setting["value"]
-#
-#         setting = client.update(setting, value="testvalue")
-#         assert setting["value"] == "testvalue"
-#         setting = client.by_id_setting(name)
-#         assert setting["value"] == "testvalue"
-#
-#         setting = client.update(setting, value=old_value)
-#         assert setting["value"] == old_value
-
-
-# type DomainOptions struct {
-# 	Fqdn  string   `json:"fqdn"`
-# 	Hosts []string `json:"hosts"`
-# }
+from common import BASE_URL, param, update_param, set_token_fqdn, get_token_fqdn
 
 
 def test_create_domain():  # NOQA
-    url = buildURL(BASE_URL, "", "")
+    url = build_url(BASE_URL, "", "")
     print "Url is \n"
     print url
     response = create_domain_test(url, param)
     result = response.json()
     assert result == response.json()
-    setTokenAndFqdn(result)
+    set_token_fqdn(result)
 
 
 # This method creates the domain
@@ -95,20 +24,19 @@ def create_domain_test(url, data):
 
 
 def test_get_domain():  # NOQA
-    token, fqdn = getTokenAndFqdn()
-    print "token is \n"
+    token, fqdn = get_token_fqdn()
+    print "get token is \n"
     print token
-    print "fqdn is \n"
+    print "get fqdn is \n"
     print fqdn
-    url = buildURL(BASE_URL, "/" + fqdn, "")
-    print "Url is \n"
+    url = build_url(BASE_URL, "/" + fqdn, "")
+    print "get Url is \n"
     print url
     response = get_domain_test(url, token)
     result = response.json()
     assert result == response.json()
-    print "result \n"
+    print "get result \n"
     print result
-    assert 0
 
 
 # This method gets the domain
@@ -121,438 +49,33 @@ def get_domain_test(url, token):
     return response
 
 
-# buildUrl return request url
-def buildURL(base, fqdn, path):
-    return '%s/domain%s%s' % (base, fqdn, path)
+def test_update_domain():  # NOQA
+    token, fqdn = get_token_fqdn()
+    print "update token is \n"
+    print token
+    print "update fqdn is \n"
+    print fqdn
+    url = build_url(BASE_URL, "/" + fqdn, "")
+    print "update Url is \n"
+    print url
+    response = update_domain_test(url, token, update_param)
+    result = response.json()
+    assert result == response.json()
+    print "update result \n"
+    print result
+    assert 0
 
-# def volume_rw_test(dev):
-#     assert volume_valid(dev)
-#     w_data = generate_random_data(VOLUME_RWTEST_SIZE)
-#     l_data = len(w_data)
-#     spos_data = generate_random_pos(VOLUME_RWTEST_SIZE)
-#     volume_write(dev, spos_data, w_data)
-#     r_data = volume_read(dev, spos_data, l_data)
-#     assert r_data == w_data
-#
-#
-# def test_volume_basic(clients, volume_name):  # NOQA
-#     # get a random client
-#     for host_id, client in clients.iteritems():
-#         break
-#
-#     with pytest.raises(Exception):
-#         volume = client.create_volume(name="wrong_volume-name-1.0", size=SIZE,
-#                                       numberOfReplicas=2)
-#         volume = client.create_volume(name="wrong_volume-name", size=SIZE,
-#                                       numberOfReplicas=2)
-#         volume = client.create_volume(name="wrong_volume-name", size=SIZE,
-#                                       numberOfReplicas=2,
-#                                       frontend="invalid_frontend")
-#
-#     volume = client.create_volume(name=volume_name, size=SIZE,
-#                                   numberOfReplicas=3)
-#     assert volume["name"] == volume_name
-#     assert volume["size"] == SIZE
-#     assert volume["numberOfReplicas"] == 3
-#     assert volume["frontend"] == "blockdev"
-#
-#     volume = wait_for_volume_state(client, volume_name, "detached")
-#     assert len(volume["replicas"]) == 3
-#
-#     assert volume["state"] == "detached"
-#     assert volume["created"] != ""
-#
-#     volumes = client.list_volume()
-#     assert len(volumes) == 1
-#     assert volumes[0]["name"] == volume["name"]
-#     assert volumes[0]["size"] == volume["size"]
-#     assert volumes[0]["numberOfReplicas"] == volume["numberOfReplicas"]
-#     assert volumes[0]["state"] == volume["state"]
-#     assert volumes[0]["created"] == volume["created"]
-#
-#     volumeByName = client.by_id_volume(volume_name)
-#     assert volumeByName["name"] == volume["name"]
-#     assert volumeByName["size"] == volume["size"]
-#     assert volumeByName["numberOfReplicas"] == volume["numberOfReplicas"]
-#     assert volumeByName["state"] == volume["state"]
-#     assert volumeByName["created"] == volume["created"]
-#
-#     lht_hostId = get_self_host_id()
-#     volume.attach(hostId=lht_hostId)
-#     volume = wait_for_volume_state(client, volume_name, "healthy")
-#
-#     # soft anti-affinity should work, assume we have 3 nodes or more
-#     hosts = {}
-#     for replica in volume["replicas"]:
-#         id = replica["hostId"]
-#         assert id != ""
-#         assert id not in hosts
-#         hosts[id] = True
-#     assert len(hosts) == 3
-#
-#     volumes = client.list_volume()
-#     assert len(volumes) == 1
-#     assert volumes[0]["name"] == volume["name"]
-#     assert volumes[0]["size"] == volume["size"]
-#     assert volumes[0]["numberOfReplicas"] == volume["numberOfReplicas"]
-#     assert volumes[0]["state"] == volume["state"]
-#     assert volumes[0]["created"] == volume["created"]
-#     assert volumes[0]["endpoint"] == DEV_PATH + volume_name
-#
-#     volume = client.by_id_volume(volume_name)
-#     assert volume["endpoint"] == DEV_PATH + volume_name
-#
-#     volume_rw_test(volume["endpoint"])
-#
-#     volume = volume.detach()
-#
-#     wait_for_volume_state(client, volume_name, "detached")
-#
-#     client.delete(volume)
-#
-#     wait_for_volume_delete(client, volume_name)
-#
-#     volumes = client.list_volume()
-#     assert len(volumes) == 0
-#
-#
-# def test_volume_iscsi_basic(clients, volume_name):  # NOQA
-#     # get a random client
-#     for host_id, client in clients.iteritems():
-#         break
-#
-#     volume = client.create_volume(name=volume_name, size=SIZE,
-#                                   numberOfReplicas=3, frontend="iscsi")
-#     assert volume["name"] == volume_name
-#     assert volume["size"] == SIZE
-#     assert volume["numberOfReplicas"] == 3
-#     assert volume["frontend"] == "iscsi"
-#
-#     volume = wait_for_volume_state(client, volume_name, "detached")
-#     assert len(volume["replicas"]) == 3
-#
-#     assert volume["state"] == "detached"
-#     assert volume["created"] != ""
-#
-#     volume.attach(hostId=host_id)
-#     volume = wait_for_volume_state(client, volume_name, "healthy")
-#
-#     volumes = client.list_volume()
-#     assert len(volumes) == 1
-#     assert volumes[0]["name"] == volume["name"]
-#     assert volumes[0]["size"] == volume["size"]
-#     assert volumes[0]["numberOfReplicas"] == volume["numberOfReplicas"]
-#     assert volumes[0]["state"] == volume["state"]
-#     assert volumes[0]["created"] == volume["created"]
-#     assert volumes[0]["frontend"] == "iscsi"
-#     assert volumes[0]["endpoint"].startswith("iscsi://")
-#
-#     try:
-#         dev = iscsi_login(volumes[0]["endpoint"])
-#         volume_rw_test(dev)
-#     finally:
-#         iscsi_logout(volumes[0]["endpoint"])
-#
-#     volume = volume.detach()
-#
-#     wait_for_volume_state(client, volume_name, "detached")
-#
-#     client.delete(volume)
-#
-#     wait_for_volume_delete(client, volume_name)
-#
-#     volumes = client.list_volume()
-#     assert len(volumes) == 0
-#
-#
-# def test_snapshot(clients, volume_name):  # NOQA
-#     for host_id, client in clients.iteritems():
-#         break
-#
-#     volume = client.create_volume(name=volume_name, size=SIZE,
-#                                   numberOfReplicas=2)
-#
-#     volume = wait_for_volume_state(client, volume_name, "detached")
-#     assert volume["name"] == volume_name
-#     assert volume["size"] == SIZE
-#     assert volume["numberOfReplicas"] == 2
-#     assert volume["state"] == "detached"
-#
-#     lht_hostId = get_self_host_id()
-#     volume = volume.attach(hostId=lht_hostId)
-#     volume = wait_for_volume_state(client, volume_name, "healthy")
-#
-#     snapshot_test(client, volume_name)
-#     volume = volume.detach()
-#     volume = wait_for_volume_state(client, volume_name, "detached")
-#
-#     client.delete(volume)
-#     volume = wait_for_volume_delete(client, volume_name)
-#
-#     volumes = client.list_volume()
-#     assert len(volumes) == 0
-#
-#
-# def snapshot_test(client, volname):
-#     volume = client.by_id_volume(volname)
-#     vol_rwsize = VOLUME_RWTEST_SIZE
-#     positions = {}
-#
-#     snap1 = volume.snapshotCreate()
-#
-#     snap2_pos = generate_random_pos(vol_rwsize, positions)
-#     snap2_wdata = generate_random_data(vol_rwsize)
-#     volume_write(volume["endpoint"], snap2_pos, snap2_wdata)
-#     snap2 = volume.snapshotCreate()
-#
-#     snap3_pos = generate_random_pos(vol_rwsize, positions)
-#     snap3_wdata = generate_random_data(vol_rwsize)
-#     volume_write(volume["endpoint"], snap3_pos, snap3_wdata)
-#     snap3 = volume.snapshotCreate()
-#
-#     snapshots = volume.snapshotList()
-#     snapMap = {}
-#     for snap in snapshots:
-#         snapMap[snap["name"]] = snap
-#
-#     assert snapMap[snap1["name"]]["name"] == snap1["name"]
-#     assert snapMap[snap1["name"]]["removed"] is False
-#     assert snapMap[snap2["name"]]["name"] == snap2["name"]
-#     assert snapMap[snap2["name"]]["parent"] == snap1["name"]
-#     assert snapMap[snap2["name"]]["removed"] is False
-#     assert snapMap[snap3["name"]]["name"] == snap3["name"]
-#     assert snapMap[snap3["name"]]["parent"] == snap2["name"]
-#     assert snapMap[snap3["name"]]["removed"] is False
-#
-#     volume.snapshotDelete(name=snap3["name"])
-#     snap3_rdata = volume_read(volume["endpoint"], snap3_pos,
-#                               len(snap3_wdata))
-#     assert snap3_rdata == snap3_wdata
-#
-#     snapshots = volume.snapshotList(volume=volname)
-#     snapMap = {}
-#     for snap in snapshots:
-#         snapMap[snap["name"]] = snap
-#
-#     assert snapMap[snap1["name"]]["name"] == snap1["name"]
-#     assert snapMap[snap1["name"]]["removed"] is False
-#     assert snapMap[snap2["name"]]["name"] == snap2["name"]
-#     assert snapMap[snap2["name"]]["parent"] == snap1["name"]
-#     assert snapMap[snap2["name"]]["removed"] is False
-#     assert snapMap[snap3["name"]]["name"] == snap3["name"]
-#     assert snapMap[snap3["name"]]["parent"] == snap2["name"]
-#     assert len(snapMap[snap3["name"]]["children"]) == 1
-#     assert "volume-head" in snapMap[snap3["name"]]["children"]
-#     assert snapMap[snap3["name"]]["removed"] is True
-#
-#     snap = volume.snapshotGet(name=snap3["name"])
-#     assert snap["name"] == snap3["name"]
-#     assert snap["parent"] == snap3["parent"]
-#     assert len(snap3["children"]) == 1
-#     assert len(snap["children"]) == 1
-#     assert "volume-head" in snap3["children"]
-#     assert "volume-head" in snap["children"]
-#     assert snap["removed"] is True
-#
-#     volume.snapshotRevert(name=snap2["name"])
-#     snap2_rdata = volume_read(volume["endpoint"], snap2_pos,
-#                               len(snap2_wdata))
-#     assert snap2_rdata == snap2_wdata
-#
-#     snapshots = volume.snapshotList(volume=volname)
-#     snapMap = {}
-#     for snap in snapshots:
-#         snapMap[snap["name"]] = snap
-#
-#     assert snapMap[snap1["name"]]["name"] == snap1["name"]
-#     assert snapMap[snap1["name"]]["removed"] is False
-#     assert snapMap[snap2["name"]]["name"] == snap2["name"]
-#     assert snapMap[snap2["name"]]["parent"] == snap1["name"]
-#     assert "volume-head" in snapMap[snap2["name"]]["children"]
-#     assert snap3["name"] in snapMap[snap2["name"]]["children"]
-#     assert snapMap[snap2["name"]]["removed"] is False
-#     assert snapMap[snap3["name"]]["name"] == snap3["name"]
-#     assert snapMap[snap3["name"]]["parent"] == snap2["name"]
-#     assert len(snapMap[snap3["name"]]["children"]) == 0
-#     assert snapMap[snap3["name"]]["removed"] is True
-#
-#     volume.snapshotDelete(name=snap1["name"])
-#     volume.snapshotDelete(name=snap2["name"])
-#
-#     volume.snapshotPurge()
-#     wait_for_snapshot_purge(volume, snap1["name"], snap3["name"])
-#
-#     snapshots = volume.snapshotList(volume=volname)
-#     snapMap = {}
-#     for snap in snapshots:
-#         snapMap[snap["name"]] = snap
-#     assert snap1["name"] not in snapMap
-#     assert snap3["name"] not in snapMap
-#
-#     # it's the parent of volume-head, so it cannot be purged at this time
-#     assert snapMap[snap2["name"]]["name"] == snap2["name"]
-#     assert snapMap[snap2["name"]]["parent"] == ""
-#     assert "volume-head" in snapMap[snap2["name"]]["children"]
-#     assert snapMap[snap2["name"]]["removed"] is True
-#     snap2_rdata = volume_read(volume["endpoint"], snap2_pos,
-#                               len(snap2_wdata))
-#     assert snap2_rdata == snap2_wdata
-#
-#
-# def test_backup(clients, volume_name):  # NOQA
-#     for host_id, client in clients.iteritems():
-#         break
-#
-#     volume = client.create_volume(name=volume_name, size=SIZE,
-#                                   numberOfReplicas=2)
-#     volume = wait_for_volume_state(client, volume_name, "detached")
-#     assert volume["name"] == volume_name
-#     assert volume["size"] == SIZE
-#     assert volume["numberOfReplicas"] == 2
-#     assert volume["state"] == "detached"
-#
-#     lht_hostId = get_self_host_id()
-#     volume = volume.attach(hostId=lht_hostId)
-#     volume = wait_for_volume_state(client, volume_name, "healthy")
-#
-#     setting = client.by_id_setting("backupTarget")
-#     # test backupTarget for multiple settings
-#     backupstores = common.get_backupstore_url()
-#     for backupstore in backupstores:
-#         if is_backupTarget_s3(backupstore):
-#             backupsettings = backupstore.split("$")
-#             setting = client.update(setting, value=backupsettings[0])
-#             assert setting["value"] == backupsettings[0]
-#
-#             credential = client.by_id_setting("backupTargetCredentialSecret")
-#             credential = client.update(credential, value=backupsettings[1])
-#             assert credential["value"] == backupsettings[1]
-#         else:
-#             setting = client.update(setting, value=backupstore)
-#             assert setting["value"] == backupstore
-#             credential = client.by_id_setting("backupTargetCredentialSecret")
-#             credential = client.update(credential, value="")
-#             assert credential["value"] == ""
-#
-#         backup_test(client, lht_hostId, volume_name)
-#
-#     volume = volume.detach()
-#     volume = wait_for_volume_state(client, volume_name, "detached")
-#
-#     client.delete(volume)
-#     volume = wait_for_volume_delete(client, volume_name)
-#
-#     volumes = client.list_volume()
-#     assert len(volumes) == 0
-#
-#
-# def backup_test(client, host_id, volname):
-#     volume = client.by_id_volume(volname)
-#     volume.snapshotCreate()
-#     w_data = generate_random_data(VOLUME_RWTEST_SIZE)
-#     start_pos = generate_random_pos(VOLUME_RWTEST_SIZE)
-#     l_data = volume_write(volume["endpoint"], start_pos, w_data)
-#     snap2 = volume.snapshotCreate()
-#     volume.snapshotCreate()
-#
-#     volume.snapshotBackup(name=snap2["name"])
-#
-#     found = False
-#     for i in range(100):
-#         bvs = client.list_backupVolume()
-#         for bv in bvs:
-#             if bv["name"] == volname:
-#                 found = True
-#                 break
-#         if found:
-#             break
-#         time.sleep(1)
-#     assert found
-#
-#     found = False
-#     for i in range(20):
-#         backups = bv.backupList()
-#         for b in backups:
-#             if b["snapshotName"] == snap2["name"]:
-#                 found = True
-#                 break
-#         if found:
-#             break
-#         time.sleep(1)
-#     assert found
-#
-#     new_b = bv.backupGet(name=b["name"])
-#     assert new_b["name"] == b["name"]
-#     assert new_b["url"] == b["url"]
-#     assert new_b["snapshotName"] == b["snapshotName"]
-#     assert new_b["snapshotCreated"] == b["snapshotCreated"]
-#     assert new_b["created"] == b["created"]
-#     assert new_b["volumeName"] == b["volumeName"]
-#     assert new_b["volumeSize"] == b["volumeSize"]
-#     assert new_b["volumeCreated"] == b["volumeCreated"]
-#
-#     # test restore
-#     restoreName = generate_volume_name()
-#     volume = client.create_volume(name=restoreName, size=SIZE,
-#                                   numberOfReplicas=2,
-#                                   fromBackup=b["url"])
-#     volume = wait_for_volume_state(client, restoreName, "detached")
-#     assert volume["name"] == restoreName
-#     assert volume["size"] == SIZE
-#     assert volume["numberOfReplicas"] == 2
-#     assert volume["state"] == "detached"
-#     volume = volume.attach(hostId=host_id)
-#     volume = wait_for_volume_state(client, restoreName, "healthy")
-#     r_data = volume_read(volume["endpoint"], start_pos, l_data)
-#     assert r_data == w_data
-#     volume = volume.detach()
-#     volume = wait_for_volume_state(client, restoreName, "detached")
-#     client.delete(volume)
-#
-#     volume = wait_for_volume_delete(client, restoreName)
-#
-#     bv.backupDelete(name=b["name"])
-#
-#     backups = bv.backupList()
-#     found = False
-#     for b in backups:
-#         if b["snapshotName"] == snap2["name"]:
-#             found = True
-#             break
-#     assert not found
-#
-#
-# def get_random_client(clients):  # NOQA
-#     for host_id, client in clients.iteritems():
-#         break
-#     return client
-#
-#
-# def test_volume_multinode(clients, volume_name):  # NOQA
-#     hosts = clients.keys()
-#
-#     volume = get_random_client(clients).create_volume(name=volume_name,
-#                                                       size=SIZE,
-#                                                       numberOfReplicas=2)
-#     volume = wait_for_volume_state(get_random_client(clients),
-#                                    volume_name, "detached")
-#
-#     for host_id in hosts:
-#         volume = volume.attach(hostId=host_id)
-#         volume = wait_for_volume_state(get_random_client(clients),
-#                                        volume_name, "healthy")
-#         assert volume["state"] == "healthy"
-#         assert volume["controller"]["hostId"] == host_id
-#         volume = volume.detach()
-#         volume = wait_for_volume_state(get_random_client(clients),
-#                                        volume_name, "detached")
-#
-#     get_random_client(clients).delete(volume)
-#     wait_for_volume_delete(get_random_client(clients), volume_name)
-#
-#     volumes = get_random_client(clients).list_volume()
-#     assert len(volumes) == 0
-#
-#
-# def is_backupTarget_s3(s):
-#     return s.startswith("s3://")
+
+# This method updates the domain
+def update_domain_test(url, token, data):
+    headers = {"Content-Type": "application/json",
+               "Accept": "application/json",
+               "Authorization": 'Bearer %s' % token}
+
+    response = requests.put(url, data=json.dumps(data), headers=headers)
+    return response
+
+
+# buildUrl return request url
+def build_url(base, fqdn, path):
+    return '%s/domain%s%s' % (base, fqdn, path)
