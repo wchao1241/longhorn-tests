@@ -80,8 +80,13 @@ def test_create_domain():  # NOQA
     print "Url is \n"
     print url
     response = create_domain_test(url, param)
-    print "response is \n"
+
+    print "response type is \n"
+    print(type(response.text))
+    print "response json is \n"
     print(response.json())
+    print "response json type is \n"
+    print(type(response.json()))
     assert 0
 
 
