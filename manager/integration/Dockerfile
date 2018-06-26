@@ -10,4 +10,4 @@ WORKDIR /integration/tests
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["./run.sh"]
+ENTRYPOINT ["sed -i 's/%ip%/${ENV_HOST}/' common.py","./run.sh"]
