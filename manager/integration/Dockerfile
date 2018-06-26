@@ -1,6 +1,6 @@
 FROM python:2.7.14-stretch
 
-ENV ENV_HOST = ""
+ENV ENV_HOST 172.31.8.164
 
 RUN apt-get update && \
     apt-get install -y vim-tiny
@@ -10,4 +10,4 @@ WORKDIR /integration/tests
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["sed -i 's/%ip%/${ENV_HOST}/' common.py","./run.sh"]
+ENTRYPOINT ["./run.sh"]
