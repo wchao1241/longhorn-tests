@@ -10,7 +10,7 @@
 #
 # from kubernetes import client as k8sclient, config as k8sconfig
 #
-BASE_URL = "https://172.31.8.164:9333/v1"
+BASE_URL = "http://172.31.8.164:9333/v1"
 TOKEN = ""
 FQDN = ""
 
