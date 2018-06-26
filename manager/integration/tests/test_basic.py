@@ -63,7 +63,6 @@ def test_update_domain():  # NOQA
     assert result == response.json()
     print "update result \n"
     print result
-    assert 0
 
 
 # This method updates the domain
@@ -73,6 +72,33 @@ def update_domain_test(url, token, data):
                "Authorization": 'Bearer %s' % token}
 
     response = requests.put(url, data=json.dumps(data), headers=headers)
+    return response
+
+
+def test_delete_domain():  # NOQA
+    token, fqdn = get_token_fqdn()
+    print "get token is \n"
+    print token
+    print "get fqdn is \n"
+    print fqdn
+    url = build_url(BASE_URL, "/" + fqdn, "")
+    print "get Url is \n"
+    print url
+    response = delete_domain_test(url, token)
+    result = response.json()
+    assert result == response.json()
+    print "get result \n"
+    print result
+    assert 0
+
+
+# This method deletes the domain
+def delete_domain_test(url, token):
+    headers = {"Content-Type": "application/json",
+               "Accept": "application/json",
+               "Authorization": 'Bearer %s' % token}
+
+    response = requests.delete(url, headers=headers)
     return response
 
 
