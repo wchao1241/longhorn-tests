@@ -16,7 +16,7 @@
 import json
 import requests
 
-from common import BASE_URL, TOKEN, FQDN, param
+from common import BASE_URL, param
 
 
 # def test_hosts_and_settings(clients):  # NOQA

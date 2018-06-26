@@ -19,11 +19,6 @@ param = {
     'hosts': ["1.1.1.1", "2.2.2.2"]
 }
 
-# class item:
-#     def __init__(self):
-#         self.Fqdn = ''  # 名称
-#         self.Hosts = []  # 列表
-
 # SIZE = str(16 * 1024 * 1024)
 # VOLUME_NAME = "longhorn-testvol"
 # DEV_PATH = "/dev/longhorn/"
