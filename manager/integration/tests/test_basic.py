@@ -13,6 +13,10 @@
 # from common import generate_volume_name
 # from common import generate_random_data
 # from common import generate_random_pos
+import json
+import requests
+
+from common import BASE_URL, TOKEN, FQDN, param
 
 
 # def test_hosts_and_settings(clients):  # NOQA
@@ -65,12 +69,32 @@
 #         assert setting["value"] == old_value
 
 
-def test_get_domain():  # NOQA
-    assert get_domain_test(3) == 5
+# type DomainOptions struct {
+# 	Fqdn  string   `json:"fqdn"`
+# 	Hosts []string `json:"hosts"`
+# }
 
 
-def get_domain_test(x):
-    return x + 1
+def test_create_domain():  # NOQA
+    url = buildURL(BASE_URL, "", "")
+    print "Url is \n"
+    print url
+    response = create_domain_test(url, param)
+    print(response.json())
+
+
+# This method creates the domain
+def create_domain_test(url, data):
+    headers = {"Content-Type": "application/json",
+               "Accept": "application/json"}
+
+    response = requests.post(url, data=json.dumps(data), headers=headers)
+    return response
+
+
+# buildUrl return request url
+def buildURL(base, fqdn, path):
+    return '%s/domain%s%s' % (base, fqdn, path)
 
 # def volume_rw_test(dev):
 #     assert volume_valid(dev)

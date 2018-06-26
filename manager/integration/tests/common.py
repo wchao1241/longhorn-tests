@@ -10,6 +10,20 @@
 #
 # from kubernetes import client as k8sclient, config as k8sconfig
 #
+BASE_URL = "34.243.228.62:9333"
+TOKEN = ""
+FQDN = ""
+
+param = {
+    'fqdn': '',
+    'hosts': ["1.1.1.1", "2.2.2.2"]
+}
+
+# class item:
+#     def __init__(self):
+#         self.Fqdn = ''  # 名称
+#         self.Hosts = []  # 列表
+
 # SIZE = str(16 * 1024 * 1024)
 # VOLUME_NAME = "longhorn-testvol"
 # DEV_PATH = "/dev/longhorn/"
@@ -68,8 +82,8 @@
 #
 # def get_mgr_ips():
 #     ret = k8sclient.CoreV1Api().list_pod_for_all_namespaces(
-#             label_selector="app=longhorn-manager",
-#             watch=False)
+#         label_selector="app=longhorn-manager",
+#         watch=False)
 #     mgr_ips = []
 #     for i in ret.items:
 #         mgr_ips.append(i.status.pod_ip)
@@ -195,7 +209,7 @@
 #
 # def k8s_delete_replica_pods_for_volume(volname):
 #     k8sclient.CoreV1Api().delete_collection_namespaced_pod(
-#         label_selector="longhorn-volume-replica="+volname,
+#         label_selector="longhorn-volume-replica=" + volname,
 #         namespace=LONGHORN_NAMESPACE,
 #         watch=False)
 #
@@ -212,8 +226,8 @@
 #
 # def generate_volume_name():
 #     return VOLUME_NAME + "-" + \
-#         ''.join(random.choice(string.ascii_lowercase + string.digits)
-#                 for _ in range(6))
+#            ''.join(random.choice(string.ascii_lowercase + string.digits)
+#                    for _ in range(6))
 #
 #
 # def get_default_engine_image(client):
@@ -329,7 +343,7 @@
 #     for i in range(RETRY_COUNTS):
 #         pos = 0
 #         if int(SIZE) != size:
-#             pos = random.randrange(0, int(SIZE)-size, 1)
+#             pos = random.randrange(0, int(SIZE) - size, 1)
 #         collided = False
 #         # it's [start, end) vs [pos, pos + size)
 #         for start, end in used.items():
