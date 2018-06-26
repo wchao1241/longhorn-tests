@@ -14,7 +14,7 @@ BASE_URL = "http://172.31.8.164:9333/v1"
 token = ""
 fqdn = ""
 
-param = {
+create_param = {
     'fqdn': '',
     'hosts': ["1.1.1.1", "2.2.2.2"]
 }

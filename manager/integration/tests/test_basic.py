@@ -1,14 +1,14 @@
 import json
 import requests
 
-from common import BASE_URL, param, update_param, set_token_fqdn, get_token_fqdn
+from common import BASE_URL, create_param, update_param, set_token_fqdn, get_token_fqdn
 
 
 def test_create_domain():  # NOQA
     url = build_url(BASE_URL, "", "")
     print "create Url is \n"
     print url
-    response = create_domain_test(url, param)
+    response = create_domain_test(url, create_param)
     result = response.json()
     assert result == response.json()
     set_token_fqdn(result)
@@ -89,7 +89,6 @@ def test_renew_domain():  # NOQA
     assert result == response.json()
     print "renew result \n"
     print result
-    assert 0
 
 
 # This method renews the domain
