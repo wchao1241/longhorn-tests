@@ -96,6 +96,10 @@ def create_domain_test(url, data):
 
 def test_get_domain():  # NOQA
     token, fqdn = getTokenAndFqdn()
+    print "token is \n"
+    print token
+    print "fqdn is \n"
+    print fqdn
     url = buildURL(BASE_URL, "/" + fqdn, "")
     print "Url is \n"
     print url
