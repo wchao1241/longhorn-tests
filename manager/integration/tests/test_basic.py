@@ -16,10 +16,7 @@ def test_create_domain():  # NOQA
 
 # This method creates the domain
 def create_domain_test(url, data):
-    headers = {"Content-Type": "application/json",
-               "Accept": "application/json"}
-
-    response = requests.post(url, data=json.dumps(data), headers=headers)
+    response = requests.post(url, data=json.dumps(data), headers=build_header(""))
     return response
 
 
@@ -27,8 +24,6 @@ def test_get_domain():  # NOQA
     token, fqdn = get_token_fqdn()
     print "get token is \n"
     print token
-    print "get fqdn is \n"
-    print fqdn
     url = build_url(BASE_URL, "/" + fqdn, "")
     print "get Url is \n"
     print url
@@ -41,11 +36,7 @@ def test_get_domain():  # NOQA
 
 # This method gets the domain
 def get_domain_test(url, token):
-    headers = {"Content-Type": "application/json",
-               "Accept": "application/json",
-               "Authorization": 'Bearer %s' % token}
-
-    response = requests.get(url, params=None, headers=headers)
+    response = requests.get(url, params=None, headers=build_header(token))
     return response
 
 
@@ -53,8 +44,6 @@ def test_update_domain():  # NOQA
     token, fqdn = get_token_fqdn()
     print "update token is \n"
     print token
-    print "update fqdn is \n"
-    print fqdn
     url = build_url(BASE_URL, "/" + fqdn, "")
     print "update Url is \n"
     print url
@@ -67,11 +56,7 @@ def test_update_domain():  # NOQA
 
 # This method updates the domain
 def update_domain_test(url, token, data):
-    headers = {"Content-Type": "application/json",
-               "Accept": "application/json",
-               "Authorization": 'Bearer %s' % token}
-
-    response = requests.put(url, data=json.dumps(data), headers=headers)
+    response = requests.put(url, data=json.dumps(data), headers=build_header(token))
     return response
 
 
@@ -79,8 +64,6 @@ def test_renew_domain():  # NOQA
     token, fqdn = get_token_fqdn()
     print "renew token is \n"
     print token
-    print "renew fqdn is \n"
-    print fqdn
     url = build_url(BASE_URL, "/" + fqdn, "/renew")
     print "renew Url is \n"
     print url
@@ -93,11 +76,7 @@ def test_renew_domain():  # NOQA
 
 # This method renews the domain
 def renew_domain_test(url, token):
-    headers = {"Content-Type": "application/json",
-               "Accept": "application/json",
-               "Authorization": 'Bearer %s' % token}
-
-    response = requests.put(url, data=None, headers=headers)
+    response = requests.put(url, data=None, headers=build_header(token))
     return response
 
 
@@ -105,8 +84,6 @@ def test_delete_domain():  # NOQA
     token, fqdn = get_token_fqdn()
     print "delete token is \n"
     print token
-    print "delete fqdn is \n"
-    print fqdn
     url = build_url(BASE_URL, "/" + fqdn, "")
     print "delete Url is \n"
     print url
@@ -119,14 +96,21 @@ def test_delete_domain():  # NOQA
 
 # This method deletes the domain
 def delete_domain_test(url, token):
-    headers = {"Content-Type": "application/json",
-               "Accept": "application/json",
-               "Authorization": 'Bearer %s' % token}
-
-    response = requests.delete(url, headers=headers)
+    response = requests.delete(url, headers=build_header(token))
     return response
 
 
-# buildUrl return request url
+# build_url return request url
 def build_url(base, fqdn, path):
     return '%s/domain%s%s' % (base, fqdn, path)
+
+
+# build_header return request header
+def build_header(token):
+    if token == "":
+        return {"Content-Type": "application/json",
+                "Accept": "application/json"}
+
+    return {"Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": 'Bearer %s' % token}
