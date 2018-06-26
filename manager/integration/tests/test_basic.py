@@ -80,7 +80,9 @@ def test_create_domain():  # NOQA
     print "Url is \n"
     print url
     response = create_domain_test(url, param)
+    print "response is \n"
     print(response.json())
+    assert 0
 
 
 # This method creates the domain
